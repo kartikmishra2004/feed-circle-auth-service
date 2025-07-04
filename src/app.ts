@@ -7,6 +7,8 @@ import morgan from "morgan";
 import { generalLimiter } from "./middlewares/rateLimiter";
 import connectDB from "./config/db";
 import { globalErrorHandler } from "./middlewares/errorHandler";
+import authRoutes from "./routes/auth.route";
+import { API_BASE } from "./config/constants";
 
 const app: Application = express();
 
@@ -24,11 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // Routes
-app.use('/api', (req, res, next) => {
-  // Example route handler
-  res.status(200).json({ message: "API is working!" });
-  next();
-});
+app.use(`${API_BASE}/auth`, authRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
