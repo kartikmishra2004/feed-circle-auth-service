@@ -1,34 +1,53 @@
-import express, { Application, Request, Response, NextFunction } from "express";
+import "dotenv/config";
+import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
-import rateLimit from "express-rate-limit";
 import morgan from "morgan";
+import { generalLimiter } from "./middlewares/rateLimiter";
+import connectDB from "./config/db";
+import { globalErrorHandler } from "./middlewares/errorHandler";
 
 const app: Application = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+// Security middlewares
 app.use(helmet());
+app.use(cors());
+app.use(generalLimiter);
 app.use(compression());
+
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Logging
 app.use(morgan("dev"));
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  })
-);
 
 // Routes
-app.use("/api", (req: Request, res: Response) => {
-  res.status(200).json({ message: "API is running." });
+app.use('/api', (req, res, next) => {
+  // Example route handler
+  res.status(200).json({ message: "API is working!" });
+  next();
 });
 
-// Global error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error." });
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
+
+
+// Global error handler
+app.use(globalErrorHandler);
+
+// Connect to the database
+connectDB();
 
 export default app;
