@@ -43,3 +43,14 @@ export const authenticate = async (
     next(error);
   }
 };
+
+export const requireEmailVerification = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user.emailVerified) {
+    return next(new AppError("Email verification required", 403));
+  }
+  next();
+};

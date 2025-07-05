@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { IUser } from "../models/user.model";
+import crypto from "crypto";
 
 export interface TokenPayload {
   id: string;
@@ -44,6 +45,10 @@ export const verifyAccessToken = (token: string): TokenPayload => {
 export const verifyRefreshToken = (token: string): TokenPayload => {
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as TokenPayload;
 };
+
+export function generateRandomToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
 
 export const generateTokenPair = (user: IUser) => {
   return {

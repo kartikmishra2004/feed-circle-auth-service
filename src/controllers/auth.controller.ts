@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
-import { generateTokenPair } from "../utils/auth";
+import { generateTokenPair, generateRandomToken } from "../utils/auth";
 import { AppError } from "../utils/appError";
 import { registerSchema, loginSchema } from "../utils/validation";
 import { AuthenticatedRequest } from "../middlewares/auth";
+import { sendVerificationEmail } from "../services/email.service";
 
 export async function register(
   req: Request,
@@ -21,10 +22,22 @@ export async function register(
     });
     const tokens = generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);
+
+    const emailVerificationToken = generateRandomToken();
+    user.emailVerificationToken = emailVerificationToken;
+
     await user.save();
+
+    const mailData = {
+      to_email: user.email,
+      to_name: user.fullName,
+      subject: "Email Verification for Bird",
+    };
+    sendVerificationEmail(mailData, emailVerificationToken);
+
     res.status(201).json({
       status: "success",
-      message: "User registered successfully.",
+      message: "Registeration successful, please confirm your email",
       data: {
         user: {
           id: user._id,
@@ -127,6 +140,60 @@ export async function getProfile(
         },
       },
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function verifyEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { token } = req.query;
+
+    if (!token || typeof token !== "string") {
+      return next(new AppError("Verification token is required", 400));
+    }
+
+    const user = await User.findOne({ emailVerificationToken: token });
+
+    if (!user) {
+      return next(new AppError("Invalid or expired verification token", 400));
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationToken = undefined;
+
+    await user.save();
+
+    res.send(`
+      <html lang="en">
+          <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <link rel="stylesheet" href="style.css" />
+              <title>Browser</title>
+          </head>
+          <body>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius: 8px; padding-top: 50px; padding-bottom: 50px; padding-left: 10px; padding-right: 10px;">
+                  <tr>
+                      <td align="center">
+                          <table cellpadding="0" cellspacing="0" border="0" width="500"
+                              style="background-color: #ffffff; border-radius: 20px; padding: 30px; font-family: Arial, sans-serif;">
+                              <tr>
+                                  <td align="center" style="color: #222222;">
+                                      <h2>Email verified</h2>
+                                  </td>
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+              </table>
+          </body>
+      </html>
+      `);
   } catch (error) {
     next(error);
   }

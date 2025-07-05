@@ -5,15 +5,17 @@ export interface IUser extends Document {
   email: string;
   password: string;
   fullName: string;
-  passwordResetToken?: string;
-  passwordResetExpires?: Date;
   refreshTokens: string[];
+  emailVerified?: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
   fbPageId?: string;
   fbPageAccessToken?: string;
   igBusinessAccountId?: string;
+  emailVerificationToken?: string;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
 }
 
 const userSchema: Schema<IUser> = new Schema(
@@ -53,6 +55,11 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       trim: true,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: String,
     passwordResetToken: String,
     passwordResetExpires: Date,
     refreshTokens: [
