@@ -1,53 +1,53 @@
-import jwt from 'jsonwebtoken';
-import { IUser } from '../models/user.model';
+import jwt from "jsonwebtoken";
+import { IUser } from "../models/user.model";
 
 export interface TokenPayload {
-    id: string;
-    email: string;
-    type: 'access' | 'refresh';
-    fbPageId?: string;
-    igBusinessAccountId?: string;
+  id: string;
+  email: string;
+  type: "access" | "refresh";
+  fbPageId?: string;
+  igBusinessAccountId?: string;
 }
 
 export const generateAccessToken = (user: IUser): string => {
-    return jwt.sign(
-        {
-            id: user._id,
-            email: user.email,
-            type: 'access'
-        },
-        process.env.JWT_SECRET!,
-        {
-            expiresIn: '7d'
-        }
-    );
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      type: "access",
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
 };
 
 export const generateRefreshToken = (user: IUser): string => {
-    return jwt.sign(
-        {
-            id: user._id,
-            email: user.email,
-            type: 'refresh'
-        },
-        process.env.JWT_REFRESH_SECRET!,
-        {
-            expiresIn: '30d'
-        }
-    );
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      type: "refresh",
+    },
+    process.env.JWT_REFRESH_SECRET!,
+    {
+      expiresIn: "30d",
+    }
+  );
 };
 
 export const verifyAccessToken = (token: string): TokenPayload => {
-    return jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
+  return jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
 };
 
 export const verifyRefreshToken = (token: string): TokenPayload => {
-    return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as TokenPayload;
+  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as TokenPayload;
 };
 
 export const generateTokenPair = (user: IUser) => {
-    return {
-        accessToken: generateAccessToken(user),
-        refreshToken: generateRefreshToken(user)
-    };
+  return {
+    accessToken: generateAccessToken(user),
+    refreshToken: generateRefreshToken(user),
+  };
 };

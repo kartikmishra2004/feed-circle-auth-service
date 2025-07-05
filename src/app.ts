@@ -19,7 +19,7 @@ app.use(generalLimiter);
 app.use(compression());
 
 // Body parser
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Logging
@@ -29,18 +29,17 @@ app.use(morgan("dev"));
 app.use(`${API_BASE}/auth`, authRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // 404 handler
 app.use((req, res, next) => {
   res.status(404).json({
-    status: 'fail',
+    status: "fail",
     message: `Can't find ${req.originalUrl} on this server`,
   });
 });
-
 
 // Global error handler
 app.use(globalErrorHandler);
