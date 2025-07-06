@@ -6,18 +6,19 @@ import {
   logoutAll,
   getProfile,
   verifyEmail,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/auth.controller";
-import {
-  authLimiter,
-  emailVerificationLimiter,
-} from "../middlewares/rateLimiter";
+import { authLimiter } from "../middlewares/rateLimiter";
 import { authenticate, requireEmailVerification } from "../middlewares/auth";
 
 const router = Router();
 
 router.post("/register", authLimiter, register);
 router.post("/login", authLimiter, login);
-router.get("/verify-email", emailVerificationLimiter, verifyEmail);
+router.get("/verify-email", authLimiter, verifyEmail);
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/reset-password", authLimiter, resetPassword);
 
 // Protected routes
 router.post("/logout", authenticate, logout);

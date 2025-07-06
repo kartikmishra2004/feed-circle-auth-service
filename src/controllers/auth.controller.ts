@@ -2,9 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
 import { generateTokenPair, generateRandomToken } from "../utils/auth";
 import { AppError } from "../utils/appError";
-import { registerSchema, loginSchema } from "../utils/validation";
+import {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "../utils/validation";
 import { AuthenticatedRequest } from "../middlewares/auth";
-import { sendVerificationEmail } from "../services/email.service";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+} from "../services/email.service";
+import crypto from "crypto";
 
 export async function register(
   req: Request,
@@ -194,6 +204,86 @@ export async function verifyEmail(
           </body>
       </html>
       `);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function forgotPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { email } = forgotPasswordSchema.parse(req.body);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+    const resetToken = generateRandomToken();
+    user.passwordResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    user.passwordResetExpires = new Date(Date.now() + 3600000);
+    await user.save();
+
+    const mailData = {
+      to_email: user.email,
+      to_name: user.fullName,
+      subject: "Password Reset Request",
+    };
+    sendPasswordResetEmail(mailData, resetToken);
+
+    res.status(200).json({
+      status: "success",
+      message: "Password reset email has been sent to your email address.",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function resetPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { token } = req.query;
+    const { password } = resetPasswordSchema.parse(req.body);
+    if (!token || typeof token !== "string") {
+      return next(new AppError("Verification token is required.", 400));
+    }
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await User.findOne({
+      passwordResetToken: tokenHash,
+      passwordResetExpires: { $gt: new Date() },
+    });
+    if (!user) {
+      return next(
+        new AppError("Invalid or expired password reset token.", 400)
+      );
+    }
+
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.refreshTokens = [];
+    await user.save();
+
+    const mailData = {
+      to_email: user.email,
+      to_name: user.fullName,
+      subject: "Password Reset Successfully.",
+    };
+
+    sendPasswordResetSuccessEmail(mailData);
+
+    res.status(200).json({
+      status: "success",
+      message: "Password reset successfully.",
+    });
   } catch (error) {
     next(error);
   }

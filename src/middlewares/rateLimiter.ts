@@ -13,19 +13,6 @@ export const authLimiter = rateLimit({
   },
 });
 
-export const emailVerificationLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000"),
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "5"),
-  message: {
-    error: "Too many email verification attempts, please try again later",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    return process.env.NODE_ENV === "development";
-  },
-});
-
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
