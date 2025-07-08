@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "../utils/auth";
-import { User } from "../models/user.model";
-import { AppError } from "../utils/appError";
+import { verifyAccessToken } from "../utils/auth.js";
+import { User } from "../models/user.model.js";
+import { AppError } from "../utils/appError.js";
 import jwt from "jsonwebtoken";
 
 export interface AuthenticatedRequest extends Request {

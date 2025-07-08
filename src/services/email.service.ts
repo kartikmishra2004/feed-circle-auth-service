@@ -1,5 +1,5 @@
 import * as nodemailer from "nodemailer";
-import { API_BASE } from "../config/constants";
+import { API_BASE } from "../config/constants.js";
 
 export interface EmailTemplate {
   to_email: string;

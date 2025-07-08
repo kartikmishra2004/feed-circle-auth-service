@@ -4,11 +4,11 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
-import { generalLimiter } from "./middlewares/rateLimiter";
-import connectDB from "./config/db";
-import { globalErrorHandler } from "./middlewares/errorHandler";
-import authRoutes from "./routes/auth.route";
-import { API_BASE } from "./config/constants";
+import { generalLimiter } from "./middlewares/rateLimiter.js";
+import connectDB from "./config/db.js";
+import { globalErrorHandler } from "./middlewares/errorHandler.js";
+import authRoutes from "./routes/auth.route.js";
+import { API_BASE } from "./config/constants.js";
 
 const app: Application = express();
 

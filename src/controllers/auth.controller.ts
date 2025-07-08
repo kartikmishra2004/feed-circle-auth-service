@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../models/user.model";
-import { generateTokenPair, generateRandomToken } from "../utils/auth";
-import { AppError } from "../utils/appError";
+import { User } from "../models/user.model.js";
+import { generateTokenPair, generateRandomToken } from "../utils/auth.js";
+import { AppError } from "../utils/appError.js";
 import {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
-} from "../utils/validation";
-import { AuthenticatedRequest } from "../middlewares/auth";
+} from "../utils/validation.js";
+import { AuthenticatedRequest } from "../middlewares/auth.js";
 import {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
-} from "../services/email.service";
+} from "../services/email.service.js";
 import crypto from "crypto";
 
 export async function register(

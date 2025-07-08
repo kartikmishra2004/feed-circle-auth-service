@@ -8,9 +8,9 @@ import {
   verifyEmail,
   forgotPassword,
   resetPassword,
-} from "../controllers/auth.controller";
-import { authLimiter } from "../middlewares/rateLimiter";
-import { authenticate, requireEmailVerification } from "../middlewares/auth";
+} from "../controllers/auth.controller.js";
+import { authLimiter } from "../middlewares/rateLimiter.js";
+import { authenticate, requireEmailVerification } from "../middlewares/auth.js";
 
 const router = Router();
 
