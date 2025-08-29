@@ -21,7 +21,7 @@ export async function sendVerificationEmail(
 ): Promise<void> {
   const verificationLink = `${process.env.BASE_URL}${API_BASE}/auth/verify-email?token=${token}`;
   const mailOptions = {
-    from: "Bird App",
+    from: "Feed Circle",
     to: data.to_email,
     subject: data.subject,
     html: `
@@ -33,20 +33,20 @@ export async function sendVerificationEmail(
                     <tr>
                         <td align="center">
                             <img alt="logo"
-                                src="https://res.cloudinary.com/dlwudcsu1/image/upload/v1751710616/Logo_1_bvog3n.png"
+                                src="https://res.cloudinary.com/dlwudcsu1/image/upload/v1756503928/Logo_2_g6feqs.png"
                                 style="width: 100px;"
                                 ></img>
                         </td>
                     </tr>
                     <tr>
                         <td align="center" style="color: #222222;">
-                            <h2>Email verification for Bird</h2>
+                            <h2>Email verification for Feed Circle</h2>
                         </td>
                     </tr>
                     <tr>
                         <td style="color: #A8A8A9; font-size: 14px; padding-bottom: 10px; text-align: center;">
                             Hello ${data.to_name}, click on the link below to verify your email address and activate
-                            your Bird account.
+                            your Feed Circle account.
                         </td>
                     </tr>
                     <tr>
@@ -78,7 +78,7 @@ export async function sendPasswordResetEmail(
 ): Promise<void> {
   const resetLink = `${process.env.BASE_URL}${API_BASE}/auth/reset-password?token=${token}`;
   const mailOptions = {
-    from: "Bird App",
+    from: "Feed Circle",
     to: data.to_email,
     subject: data.subject,
     html: `
@@ -131,7 +131,7 @@ export async function sendPasswordResetSuccessEmail(
   data: EmailTemplate
 ): Promise<void> {
   const mailOptions = {
-    from: "Bird App",
+    from: "Feed Circle",
     to: data.to_email,
     subject: data.subject,
     html: `

@@ -1,12 +1,15 @@
 {
-  "name": "bird",
+  "name": "feedcirclemobile",
   "version": "1.0.0",
-  "description": "Bird is a powerfull tool that can automate your instagram page to grow your business faster.",
+  "description": "A smart platform that connects NGOs, restaurants, and individuals to share surplus food with those in need. Simplifying food donations and reducing waste with an easy-to-use interface.",
   "keywords": [
-    "instagram",
-    "AI",
-    "automation",
-    "ai-agent"
+    "food-sharing",
+    "NGO",
+    "restaurant",
+    "donation",
+    "community",
+    "hunger",
+    "waste-reduction"
   ],
   "license": "ISC",
   "author": "Kartik Mishra",

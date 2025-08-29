@@ -41,7 +41,7 @@ export async function register(
     const mailData = {
       to_email: user.email,
       to_name: user.fullName,
-      subject: "Email Verification for Bird",
+      subject: "Email Verification for Feed Circle",
     };
     sendVerificationEmail(mailData, emailVerificationToken);
 
