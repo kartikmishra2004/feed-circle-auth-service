@@ -15,6 +15,7 @@ import {
   sendPasswordResetSuccessEmail,
 } from "../services/email.service.js";
 import crypto from "crypto";
+import { getRedisClient } from "../services/redis.service.js";
 
 export async function register(
   req: Request,
@@ -138,16 +139,37 @@ export async function getProfile(
   next: NextFunction
 ) {
   try {
+    const client = getRedisClient();
+    const cacheKey = `user:${req.user._id}`;
+    const cachedUser = await client.get(cacheKey);
+
+    if (cachedUser) {
+      return res.json({
+        status: "success",
+        source: "cache",
+        data: {
+          user: JSON.parse(cachedUser),
+        },
+      });
+    }
+
+    const userData = {
+      id: req.user._id,
+      email: req.user.email,
+      fullName: req.user.fullName,
+      createdAt: req.user.createdAt,
+      updatedAt: req.user.updatedAt,
+    };
+
+    await client.set(cacheKey, JSON.stringify(userData), {
+      EX: 60 * 5,
+    });
+
     res.json({
       status: "success",
+      source: "database",
       data: {
-        user: {
-          id: req.user._id,
-          email: req.user.email,
-          fullName: req.user.fullName,
-          createdAt: req.user.createdAt,
-          updatedAt: req.user.updatedAt,
-        },
+        user: userData,
       },
     });
   } catch (error) {
