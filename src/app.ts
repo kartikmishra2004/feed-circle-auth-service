@@ -9,7 +9,6 @@ import connectDB from "./config/db.js";
 import { globalErrorHandler } from "./middlewares/errorHandler.js";
 import authRoutes from "./routes/auth.route.js";
 import { API_BASE } from "./config/constants.js";
-import { gatewayAuth } from "./middlewares/gatewayAuth.js";
 
 const app: Application = express();
 
@@ -27,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // Routes
-app.use(`${API_BASE}/auth`, gatewayAuth, authRoutes);
+app.use(`${API_BASE}/auth`, authRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
