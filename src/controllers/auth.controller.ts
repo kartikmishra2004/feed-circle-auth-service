@@ -140,6 +140,8 @@ export async function getProfile(
 ) {
   try {
     const client = getRedisClient();
+    const userRole = req.user.role;
+
     const cacheKey = `user:${req.user._id}`;
     const cachedUser = await client.get(cacheKey);
 
@@ -153,14 +155,34 @@ export async function getProfile(
       });
     }
 
-    const userData = {
-      id: req.user._id,
-      email: req.user.email,
-      fullName: req.user.fullName,
-      role: req.user.role,
-      createdAt: req.user.createdAt,
-      updatedAt: req.user.updatedAt,
-    };
+    let userData;
+
+    if (userRole === 'individual') {
+      userData = {
+        id: req.user._id,
+        email: req.user.email,
+        fullName: req.user.fullName,
+        role: req.user.role,
+        emailVerified: req.user.emailVerified,
+        createdAt: req.user.createdAt,
+        updatedAt: req.user.updatedAt,
+      };
+    }
+
+    if (userRole === 'organization') {
+      userData = {
+        id: req.user._id,
+        email: req.user.email,
+        role: req.user.role,
+        organizationName: req.user.organizationName,
+        organizationType: req.user.organizationType,
+        contactPersonName: req.user.contactPersonName,
+        phone: req.user.phone,
+        emailVerified: req.user.emailVerified,
+        createdAt: req.user.createdAt,
+        updatedAt: req.user.updatedAt,
+      };
+    }
 
     await client.set(cacheKey, JSON.stringify(userData), {
       EX: 60 * 5,
