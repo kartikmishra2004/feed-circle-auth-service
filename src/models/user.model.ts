@@ -4,7 +4,12 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   email: string;
   password: string;
+  role: string;
   fullName: string;
+  organizationName: string;
+  organizationType: string;
+  contactPersonName: string;
+  phone: string;
   refreshTokens: string[];
   emailVerified?: boolean;
   createdAt: Date;
@@ -37,23 +42,37 @@ const userSchema: Schema<IUser> = new Schema(
       minlength: [8, "Password must be at least 8 characters"],
       select: false,
     },
+    role: {
+      type: String,
+      enum: ['individual', 'organization'],
+      required: true,
+    },
     fullName: {
       type: String,
-      required: [true, "Full name is required"],
+      required: [function () { return this.role === 'individual' }, "Full name is required"],
       trim: true,
-      maxlength: [60, "Full name cannot exceed 50 characters"],
+      maxlength: [60, "Full name cannot exceed 60 characters"],
     },
-    fbPageId: {
+    organizationName: {
       type: String,
+      required: [function () { return this.role === 'organization' }, "Organization name is required"],
+      trim: true,
+      maxlength: [100, "Full name cannot exceed 100 characters"],
+    },
+    organizationType: {
+      type: String,
+      required: [function () { return this.role === 'organization' }, "Organization type is required"],
       trim: true,
     },
-    igBusinessAccountId: {
+    contactPersonName: {
       type: String,
+      required: [function () { return this.role === 'organization' }, "Organization type is required"],
       trim: true,
+      maxlength: [60, "Contact person name cannot exceed 60 characters"],
     },
-    fbPageAccessToken: {
+    phone: {
       type: String,
-      trim: true,
+      required: [function () { return this.role === 'organization' }, "Organization type is required"],
     },
     emailVerified: {
       type: Boolean,

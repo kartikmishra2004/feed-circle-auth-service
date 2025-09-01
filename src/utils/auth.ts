@@ -5,9 +5,8 @@ import crypto from "crypto";
 export interface TokenPayload {
   id: string;
   email: string;
+  role: "individual" | "organization";
   type: "access" | "refresh";
-  fbPageId?: string;
-  igBusinessAccountId?: string;
 }
 
 export const generateAccessToken = (user: IUser): string => {
@@ -15,6 +14,7 @@ export const generateAccessToken = (user: IUser): string => {
     {
       id: user._id,
       email: user.email,
+      role: user.role,
       type: "access",
     },
     process.env.JWT_SECRET!,
@@ -29,6 +29,7 @@ export const generateRefreshToken = (user: IUser): string => {
     {
       id: user._id,
       email: user.email,
+      role: user.role,
       type: "refresh",
     },
     process.env.JWT_REFRESH_SECRET!,
