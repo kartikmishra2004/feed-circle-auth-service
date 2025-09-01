@@ -157,6 +157,7 @@ export async function getProfile(
       id: req.user._id,
       email: req.user.email,
       fullName: req.user.fullName,
+      role: req.user.role,
       createdAt: req.user.createdAt,
       updatedAt: req.user.updatedAt,
     };
