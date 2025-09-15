@@ -44,7 +44,7 @@ export async function register(
       to_name: user.fullName,
       subject: "Email Verification for Feed Circle",
     };
-    sendVerificationEmail(mailData, emailVerificationToken);
+    await sendVerificationEmail(mailData, emailVerificationToken);
 
     res.status(201).json({
       status: "success",
@@ -278,7 +278,7 @@ export async function forgotPassword(
       to_name: user.fullName,
       subject: "Password Reset Request",
     };
-    sendPasswordResetEmail(mailData, resetToken);
+    await sendPasswordResetEmail(mailData, resetToken);
 
     res.status(200).json({
       status: "success",
@@ -323,7 +323,7 @@ export async function resetPassword(
       subject: "Password Reset Successfully.",
     };
 
-    sendPasswordResetSuccessEmail(mailData);
+    await sendPasswordResetSuccessEmail(mailData);
 
     res.status(200).json({
       status: "success",
