@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 })();
 
 // Logging
-app.use(morgan("dev"));
+app.use(morgan("combined"));
 
 // Routes
 app.use(`${API_BASE}/auth`, authRoutes);
