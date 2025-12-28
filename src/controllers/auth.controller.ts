@@ -146,13 +146,14 @@ export async function getProfile(
     const cachedUser = await client.get(cacheKey);
 
     if (cachedUser) {
-      return res.json({
+      res.json({
         status: "success",
         source: "cache",
         data: {
           user: JSON.parse(cachedUser),
         },
       });
+      return;
     }
 
     let userData;
